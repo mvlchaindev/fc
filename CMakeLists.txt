@@ -52,6 +52,12 @@ ENDIF()
 
 find_package(OpenSSL REQUIRED)
 
+if ("${CORE_SYMBOL_NAME}" STREQUAL "")
+  set( CORE_SYMBOL_NAME "MVL" )
+endif()
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/include/fc/crypto/public_key.hpp.in ${CMAKE_CURRENT_BINARY_DIR}/include/fc/crypto/public_key.hpp)
+
 set( fc_sources
      src/uint128.cpp
      src/real128.cpp
@@ -151,6 +157,8 @@ add_definitions(-DWEBSOCKETPP_STRICT_MASKING -DBOOST_ASIO_HAS_STD_CHRONO)
 
 target_include_directories(fc
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_BINARY_DIR}/include
+    ${Boost_INCLUDE_DIR}
     ${OPENSSL_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/vendor/websocketpp
   )
@@ -182,5 +190,6 @@ ENDIF()
 install(TARGETS fc
    LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
    ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/fc DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR})
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/fc DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR} FILES_MATCHING PATTERN "*.hpp")
+install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/fc DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR})
 
